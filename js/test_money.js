@@ -1,79 +1,61 @@
 const assert = require('assert');
 
-// class Dollar {
-// 	constructor (amt) {
-// 		this.amount = amt;
-// 	}
+const Portfolio = require('./portfolio');
+const Money = require('./money')
+
+class MoneyTest {
+	testMultiplication () {
+		let tenEuros = new Money(10, 'EUR');
+		let twentyEuros = new Money(20, 'EUR');
+
+		assert.deepStrictEqual(tenEuros.times(20), twentyEuros);
+	}
+
+	testDivision () {
+		let originalMoney = new Money(4002, "KRW");
+		let expectedMoneyAfterDivision = new Money(1000.5, "KRW");
+		
+		assert.deepStrictEqual(originalMoney.divide(4), expectedMoneyAfterDivision);
+	}
+
+	testAddition () {
+		let fiveDollar = new Money(5, "USD")
+		let tenDollar = new Money(10, "USD")
+		let fifteenDollar = new Money(15, "USD");
+		let portfolio = new Portfolio();
+		portfolio.add(fiveDollar, tenDollar);
+		
+		assert.deepStrictEqual(portfolio.evaluate("USD"), fifteenDollar)
+	}
+
+	getAllTestMethod() {
+		// let testMethod = ['testMultiplication', 'testDivision', 'testAddition'];
+		let moneyPrototype = MoneyTest.prototype;
+		let allProps = Object.getOwnPropertyNames(moneyPrototype);
+
+		let testMethod = allProps.filter((p) => {
+			return typeof moneyPrototype[p] === 'function' && p.startsWith('test');
+		})
+
+		return testMethod;
+	}
 	
-// 	times = (multiplier) => {
-// 		return new Dollar(this.amount * multiplier);
-// 	}
-// }
-
-// let fiver = new Dollar(5);
-// let tenner = fiver.times(2);
-
-// assert.strictEqual(tenner.amount, 10);
-
-class Money {
-	constructor(amt, currency) {
-		this.amount = amt;
-		this.currency = currency;
+	runAllTests () {
+		let testMethods = this.getAllTestMethod();
+		testMethods.forEach((m) => {
+			console.log('Running %s()', m)
+			let method = Reflect.get(this, m);
+			try {
+				Reflect.apply(method, this, []);
+			} catch (e) {
+				if (e instanceof assert.AssertionError) {
+					console.log(e);
+				} else {
+					throw e;
+				}
+			}
+		})
 	}
-
-	// using arrow function somehow changes the return profile of new Money()
-	// divide = (divisor) => {
-	// 	return new Money(this.amount / divisor, this.currency);
-	// }
-	// times = (multiplier) => {
-	// 	return new Money(this.amount * multiplier, this.currency);
-	// }
-
-	divide(divisor) {
-		return new Money(this.amount / divisor, this.currency);
-	}
-
-	times(multiplier) {
-		return new Money(this.amount * multiplier, this.currency);
-	}
-
 }
 
-class Portfolio {
-	constructor () {
-		this.moneys = []
-	};
-
-	add(...moneys) {
-		this.moneys = this.moneys.concat(moneys)
-	};
-
-	evaluate(currency) {
-		let total = this.moneys.reduce((sum, money) => {
-			return sum + money.amount
-		}, 0);
-		return new Money(total, "USD");
-	};
-};
-
-let tenEuros = new Money(10);
-let twentyEuros = tenEuros.times(2);
-
-assert.strictEqual(twentyEuros.amount, 20);
-
-let originalMoney = new Money(4002, "KRW");
-let expectedMoneyAfterDivision = new Money(1000.5, "KRW");
-
-assert.deepStrictEqual(originalMoney.divide(4), expectedMoneyAfterDivision);
-
-
-let fiveDollar = new Money(5, "USD")
-let tenDollar = new Money(10, "USD")
-
-assert.deepStrictEqual(fiveDollar.times(2), tenDollar)
-
-let fifteenDollar = new Money(15, "USD");
-let portfolio = new Portfolio();
-portfolio.add(fiveDollar, tenDollar);
-
-assert.deepStrictEqual(portfolio.evaluate("USD"), fifteenDollar)
+new MoneyTest().runAllTests();

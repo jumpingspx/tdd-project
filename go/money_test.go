@@ -17,7 +17,7 @@ import (
 // }
 
 func TestMultiplicationInEuros(t *testing.T) {
-	tenEuros := s.newMoney{
+	tenEuros := s.NewMoney{
 		amount:   10,
 		currency: "EUR",
 	}
@@ -29,9 +29,9 @@ func TestMultiplicationInEuros(t *testing.T) {
 }
 
 func TestDivision(t *testing.T) {
-	originalMoney := s.newMoney{amount: 4002, currency: "KRW"}
+	originalMoney := s.NewMoney{amount: 4002, currency: "KRW"}
 	actualResult := originalMoney.Divide(4)
-	expectedResult := s.newMoney{amount: 1000.5, currency: "KRW"}
+	expectedResult := s.NewMoney{amount: 1000.5, currency: "KRW"}
 
 	// if expectedMoneyAfterDivision != actualMoneyAfterDivision {
 	// 	t.Errorf("Expected %+v got %+v", expectedMoneyAfterDivision, actualMoneyAfterDivision)
@@ -44,9 +44,9 @@ func TestAddition(t *testing.T) {
 	var portfolio s.Portfolio
 	var portfolioInDollars s.Money
 
-	fiveDollar := s.newMoney{amount: 5, currency: "USD"}
-	tenDollar := s.newMoney{amount: 10, currency: "USD"}
-	fifteenDollar := s.newMoney{amount: 15, currency: "USD"}
+	fiveDollar := s.NewMoney{amount: 5, currency: "USD"}
+	tenDollar := s.NewMoney{amount: 10, currency: "USD"}
+	fifteenDollar := s.NewMoney{amount: 15, currency: "USD"}
 
 	portfolio = portfolio.Add(fiveDollar)
 	portfolio = portfolio.Add(tenDollar)
